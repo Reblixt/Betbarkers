@@ -78,6 +78,8 @@ module nft::betbarkers {
 
         let nft = impl_mint(name, image_url, description, rarity, keys, values, ctx);
         emit(MintNftEvent { nft_id: nft.id.to_inner() });
+
+        //TODO: Change to transfer to a kiosk
         transfer::transfer(nft, ctx.sender());
 
         config.mint_count = config.mint_count + 1;
