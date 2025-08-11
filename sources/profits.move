@@ -52,7 +52,6 @@ module nft::profits {
     }
 
     // ============= Public Functions ==============
-
     public fun deposit_profits<C>(profits: Coin<C>, config: &Config, ctx: &mut TxContext) {
         let profit_uid = object::new(ctx);
         let profit_id = profit_uid.to_inner();

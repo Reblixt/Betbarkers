@@ -117,7 +117,7 @@ module nft::bet_nft_tests {
         let mint_cap = scen.take_from_address<Nft::MintCap>(Owner);
         let mut config = Scen::take_shared<Config>(scen);
 
-        Nft::mint(
+        let nft = Nft::create_nft(
             b"First Betbarker".to_string(),
             b"https://example.com/image1.png".to_string(),
             b"First Betbarker Description".to_string(),
@@ -130,11 +130,10 @@ module nft::bet_nft_tests {
         );
 
         scen.next_tx(Owner);
-        let nft = scen.take_from_address<Betbarkers>(Owner);
 
         let mut i = 0;
         while (i < 10) {
-            Nft::mint(
+            let new_nft = Nft::create_nft(
                 b"First Betbarker".to_string(),
                 b"https://example.com/image1.png".to_string(),
                 b"First Betbarker Description".to_string(),
@@ -145,6 +144,7 @@ module nft::bet_nft_tests {
                 &mint_cap,
                 scen.ctx(),
             );
+            transfer::public_transfer(new_nft, scen.ctx().sender());
             i = i + 1;
         };
         let mint_count = config.mint_count();

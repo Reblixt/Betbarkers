@@ -61,9 +61,8 @@ module nft::betbarkers {
         transfer::transfer(MintCap { id: object::new(ctx) }, sender);
     }
 
-    // ============== Entry Functions ==============
-    // #[allow(lint(self_transfer))]
-    public entry fun mint(
+    // ============== Public Functions ==============
+    public fun create_nft(
         name: String,
         image_url: String,
         description: String,
@@ -73,16 +72,14 @@ module nft::betbarkers {
         config: &mut Config,
         _: &MintCap,
         ctx: &mut TxContext,
-    ) {
+    ): Betbarkers {
         config.assert_mintable();
 
         let nft = impl_mint(name, image_url, description, rarity, keys, values, ctx);
         emit(MintNftEvent { nft_id: nft.id.to_inner() });
 
-        //TODO: Change to transfer to a kiosk
-        transfer::transfer(nft, ctx.sender());
-
         config.mint_count = config.mint_count + 1;
+        nft
     }
 
     // ============== Internal Functions ==============
@@ -151,9 +148,7 @@ module nft::betbarkers {
         mut tp: transfer_policy::TransferPolicy<Betbarkers>,
         tp_cap: transfer_policy::TransferPolicyCap<Betbarkers>,
         sender: address,
-        // pub: &Publisher, ctx: &mut TxContext
     ) {
-        // Add the royalty rule 2 % and a minimum amount of 0.1 SUI
         royalty_rule::add(&mut tp, &tp_cap, 200, 1_000_000_00);
         kiosk_lock_rule::add(&mut tp, &tp_cap);
 
